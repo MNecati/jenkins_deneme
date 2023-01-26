@@ -1,27 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'nginx:latest'
-        }
+  agent { label "linux" }
+  stages {
+    stage("build") {
+      steps {
+        sh """
+          docker build -t hello_there .
+        """
+      }
     }
-    stages {
-        stage('Start web server') {
-            steps {
-                sh 'nginx'
-            }
-        }
-        stage('Configure web server') {
-            steps {
-                script {
-                    containerId = sh(returnStdout: true, script: 'docker ps -q').trim()
-                }
-                sh "docker cp my_nginx.conf ${containerId}:/etc/nginx/conf.d/"
-            }
-        }
-        stage('Open website') {
-            steps {
-                sh 'curl http://localhost'
-            }
-        }
+    stage("run") {
+      steps {
+        sh """
+          docker run --rm hello_there
+        """
+      }
     }
+  }
 }
