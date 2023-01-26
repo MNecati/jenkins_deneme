@@ -7,12 +7,12 @@ pipeline {
     stages {
         stage('Start web server') {
             steps {
-                sh 'nginx'
+                sh 'nginx &'
             }
         }
         stage('Configure web server') {
             steps {
-                sh 'docker cp my_nginx.conf 363c23:/etc/nginx/conf.d/'
+                sh 'docker cp my_nginx.conf $(docker ps -q):/etc/nginx/conf.d/'
             }
         }
         stage('Open website') {
