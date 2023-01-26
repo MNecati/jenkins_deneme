@@ -35,7 +35,7 @@ pipeline {
     }
     stage('push image') {
       steps {
-        sh 'docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
+        sh 'docker push ghcr.io/MNecati/jenkins_deneme'
       }
     }
   }
