@@ -12,6 +12,7 @@ pipeline {
     stage('build image') {
       steps {
         sh 'docker build -t hello_there .'
+        sh docker images
       }
     }
     stage("Run") {
