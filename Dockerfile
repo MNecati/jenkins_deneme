@@ -1,3 +1,3 @@
-FROM nginx:latest
+FROM python:3.7-alpine
 
-COPY . /usr/share/nginx/html
+CMD [ "python", "-c", "print('Hi there!')"]
