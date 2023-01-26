@@ -1,14 +1,14 @@
 pipeline {
   agent { label "ubuntu" }
   stages {
-    stage("build") {
+    stage("Build") {
       steps {
         sh """
           docker build -t hello_there .
         """
       }
     }
-    stage("run") {
+    stage("Run") {
       steps {
         sh """
           docker run --rm hello_there
