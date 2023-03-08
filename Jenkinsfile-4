@@ -17,7 +17,7 @@ pipeline {
         always {
             emailext body: "Jenkins build ${currentBuild.currentResult}.\n\nPlease check the build artifacts in the console output.",
                 subject: "Jenkins build ${currentBuild.currentResult}",
-                to: 'recipient@example.com',
+                to: 'mnexatitetik123@gmail.com',
                 charset: 'UTF-8', attachmentsPattern: 'build.log',
                 mimeType: 'text/plain'
         }
