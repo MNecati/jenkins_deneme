@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'make'
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts 'build.log'
+            mail to: 'm.necatitetik@hotmail.com',
+                 subject: "Pipeline ${currentBuild.result}: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                 body: "Pipeline ${currentBuild.result}: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} \n\nSee attached build log for details.",
+                 attachmentsPattern: 'build.log'
+        }
+    }
+}
