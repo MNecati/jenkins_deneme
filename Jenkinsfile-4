@@ -1,65 +1,37 @@
 pipeline {
-  agent any
-  
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-    stage('Build') {
-      steps {
-        sh './gradlew build'
-      }
-    }
-    stage('Test') {
-      steps {
-        sh './gradlew test'
-      }
-    }
-    stage('Send email') {
-      steps {
-        script {
-          def subject = "${env.JOB_NAME} - Build # ${BUILD_NUMBER} - ${currentBuild.result}"
-          def body = """<p>Dear ${BUILD_USER},</p>
-                       <p>The pipeline for ${env.JOB_NAME} with build number ${BUILD_NUMBER} has completed ${currentBuild.result}.</p>
-                       <p>Please find the build log attached to this email.</p>"""
-          emailext (
-            to: 'mnexatitetik123@gmail.com',
-            subject: subject,
-            body: body,
-            attachmentsPattern: 'build.log',
-            contentType: 'text/html'
-          )
+    agent any
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/MNecati/jenkins_deneme.git'
+            }
         }
-      }
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Send Email Notification') {
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        emailext (
+                            subject: 'Pipeline Success Notification',
+                            body: '''<p>Dear ${BUILD_USER},</p><p>The pipeline for ${env.JOB_NAME} with build number ${BUILD_NUMBER} has completed successfully.</p><p>Please find the build log attached to this email.</p>''',
+                            to: 'mnexatitetik123@gmail.com',
+                            attachmentsPattern: 'build.log'
+                        )
+                    } else {
+                        emailext (
+                            subject: 'Pipeline Failure Notification',
+                            body: '''<p>Dear ${BUILD_USER},</p><p>The pipeline for ${env.JOB_NAME} with build number ${BUILD_NUMBER} has failed.</p><p>Please find the build log attached to this email.</p>''',
+                            to: 'mnexatitetik123@gmail.com',
+                            attachmentsPattern: 'build.log'
+                        )
+                    }
+                }
+            }
+        }
     }
-  }
-  
-  post {
-    always {
-      archiveArtifacts artifacts: 'build/libs/*.jar, build/test-results/test/*.xml, build/reports/tests/test/*.html', allowEmptyArchive: true
-      stash includes: 'build/**', name: 'build'
-      junit 'build/test-results/test/*.xml'
-    }
-    success {
-      sh 'echo "Build succeeded"'
-    }
-    failure {
-      sh 'echo "Build failed"'
-      script {
-        def subject = "${env.JOB_NAME} - Build # ${BUILD_NUMBER} - ${currentBuild.result}"
-        def body = """<p>Dear ${BUILD_USER},</p>
-                     <p>The pipeline for ${env.JOB_NAME} with build number ${BUILD_NUMBER} has completed ${currentBuild.result}.</p>
-                     <p>Please find the build log attached to this email.</p>"""
-        emailext (
-          to: 'mnexatitetik123@gmail.com',
-          subject: subject,
-          body: body,
-          attachmentsPattern: 'build.log',
-          contentType: 'text/html'
-        )
-      }
-    }
-  }
 }
