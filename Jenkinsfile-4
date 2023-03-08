@@ -3,18 +3,23 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'make'
+                sh 'echo "Build"'
+                sh 'echo "Some build output" > build.log'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Test"'
             }
         }
     }
     post {
         always {
-            archiveArtifacts 'build.log'
-            mail to: 'm.necatitetik@hotmail.com',
-                 subject: "Pipeline ${currentBuild.result}: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                 body: "Pipeline ${currentBuild.result}: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} \n\nSee attached build log for details.",
-                 charset: 'UTF-8',
-                 attachmentsPattern: 'build.log'
+            emailext body: "Jenkins build ${currentBuild.currentResult}.\n\nPlease check the build artifacts in the console output.",
+                subject: "Jenkins build ${currentBuild.currentResult}",
+                to: 'recipient@example.com',
+                charset: 'UTF-8', attachmentsPattern: 'build.log',
+                mimeType: 'text/plain'
         }
     }
 }
