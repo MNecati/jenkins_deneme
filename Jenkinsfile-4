@@ -1,15 +1,9 @@
 pipeline {
     agent any
     stages {
-        stage('Clone Repository') {
+        stage('Do Something Useless') {
             steps {
-                git 'https://github.com/MNecati/jenkins_deneme.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'npm install'
-                sh 'npm run build'
+                sh 'echo "This is a useless step"'
             }
         }
         stage('Send Email Notification') {
